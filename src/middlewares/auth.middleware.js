@@ -1,29 +1,39 @@
-const userModel = require("../models/user.model")
-const jwt = require("jsonwebtoken")
+const userModel = require("../models/user.model");
+const jwt = require("jsonwebtoken");
 
-async function authMiddleware(req, res, next){
-    const token = req.cookies.token || req.headers.authorization?.slpit(" ")[1]
+async function authMiddleware(req, res, next) {
+    const token =
+        req.cookies?.token ||
+        req.headers.authorization?.split(" ")[1];
 
-    if(!token){
+    if (!token) {
         return res.status(401).json({
-            message: "Unautorized access, token is missing"
-        })
+            message: "Unauthorized access, token is missing"
+        });
     }
 
-    try{
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        const user = await userModel.findOne(decode.userId)
+        const user = await userModel.findById(decoded.userId);
 
-        req.user = user
+        if (!user) {
+            return res.status(401).json({
+                message: "Unauthorized access, user not found"
+            });
+        }
 
-        next()
+        req.user = user;
 
-    }catch(err){
+        next();
+
+    } catch (err) {
+        console.error("Auth error:", err);
+
         return res.status(401).json({
-            message: "Unautorized access, token is missing"
-        }) 
+            message: "Unauthorized access, invalid token"
+        });
     }
 }
 
-module.exports = {authMiddleware} 
+module.exports = { authMiddleware };

@@ -46,4 +46,7 @@ We're excited to have you on board!\n\nBest regards,\nThe Backend Ledger Team`;
 const html = `<p>Hello ${name},</p><p>Thank you for registering at Backend Ledger. We're excited to have you on board!</p><p>Best regards,<br>The Backend Ledger Team</p>`;
 }
 
-module.exports = sendEmail;
+module.exports = {
+  sendEmail,
+  sendRegistrationEmail,
+}
